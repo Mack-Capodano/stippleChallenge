@@ -41,7 +41,7 @@ First, let's load an image that we'll convert to a blue noise stippling pattern.
 
 ```{python}
 #| label: load-image
-#| echo: true
+#| echo: false
 #| fig-cap: "Original image before stippling"
 
 import numpy as np
@@ -89,7 +89,7 @@ Before applying the stippling algorithm, we create an **importance map** that id
 
 ```{python}
 #| label: importance-map
-#| echo: true
+#| echo: false
 #| message: false
 #| warning: false
 
@@ -187,7 +187,7 @@ The stippling algorithm uses a modified void-and-cluster approach that:
 
 ```{python}
 #| label: stippling-functions
-#| echo: true
+#| echo: false
 #| message: false
 #| warning: false
 
@@ -301,7 +301,7 @@ Before generating the stippling pattern, we prepare the image by resizing if nec
 
 ```{python}
 #| label: prep-image
-#| echo: true
+#| echo: false
 #| message: false
 #| warning: false
 
@@ -350,7 +350,7 @@ Now let's apply the stippling algorithm to create the blue noise stippling patte
 
 ```{python}
 #| label: generate-stipple
-#| echo: true
+#| echo: false
 #| message: false
 #| warning: false
 
@@ -380,7 +380,7 @@ Let's visualize the original image, the importance map, and the stippled version
 
 ```{python}
 #| label: display-results
-#| echo: true
+#| echo: false
 #| fig-cap: "Comparison of original image, importance map, and blue noise stippling"
 #| fig-width: 7
 #| fig-height: 4
@@ -422,7 +422,7 @@ This experiment modifies the importance map to strongly prioritize darker areas,
 
 ```{python}
 #| label: darker-colors-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "Stippling experiment focusing on darker colors"
 #| fig-width: 7
 #| fig-height: 4
@@ -512,7 +512,7 @@ This experiment uses edge detection to emphasize the player's silhouette and fea
 
 ```{python}
 #| label: edge-enhanced-player-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "Edge-enhanced stippling to make the player pop out"
 #| fig-width: 7
 #| fig-height: 4
@@ -620,7 +620,7 @@ This experiment creates an importance map based on local contrast patterns, boos
 
 ```{python}
 #| label: contrast-player-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "Contrast-based stippling to isolate the player silhouette"
 #| fig-width: 7
 #| fig-height: 4
@@ -732,7 +732,7 @@ This experiment uses a higher percentage of stipple points (12% instead of 8%) t
 
 ```{python}
 #| label: high-density-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "High density stippling experiment (12% points)"
 #| fig-width: 7
 #| fig-height: 4
@@ -789,7 +789,7 @@ This experiment uses a lower percentage of stipple points (5% instead of 8%) to 
 
 ```{python}
 #| label: low-density-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "Low density stippling experiment (5% points)"
 #| fig-width: 7
 #| fig-height: 4
@@ -846,7 +846,7 @@ This experiment uses a higher sigma value (1.2 instead of 0.9) for the blue nois
 
 ```{python}
 #| label: high-sigma-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "High sigma stippling experiment (σ=1.2)"
 #| fig-width: 7
 #| fig-height: 4
@@ -903,7 +903,7 @@ This experiment uses a lower sigma value (0.5 instead of 0.9) for the blue noise
 
 ```{python}
 #| label: low-sigma-experiment
-#| echo: true
+#| echo: false
 #| fig-cap: "Low sigma stippling experiment (σ=0.5)"
 #| fig-width: 7
 #| fig-height: 4
@@ -948,6 +948,8 @@ plt.show()
 - **Same Parameters**: All other settings identical to baseline (percentage=0.08, content_bias=0.9)
 - **Why**: Creates more dispersed stippling with smaller spacing variations, producing a more uniform, grid-like distribution
 
+## How the parameter changes affect the final result
+-The different parameters affect the result in different ways. Some emphasize the dark jersey areas, some emphasize the player silhouette, some emphasize the background, some emphasize the mid-tones. There are also different levels of clustering done depending on parameter settings. All these affect how much or little Drake pops out from the background and his jersey. The best results came from the original, the high density, and the player edge focus settings. These settings created the most balanced and visually pleasing results. 
 ####
 
 
@@ -962,7 +964,7 @@ This section creates a GIF showing how the stippled image looks as more points a
 
 ```{python}
 #| label: progressive-stippling
-#| echo: true
+#| echo: false
 #| message: false
 #| warning: false
 
