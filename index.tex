@@ -148,22 +148,6 @@
 
 \KOMAoption{captions}{tableheading}
 \makeatletter
-\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
-\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
-\definecolor{quarto-callout-color}{HTML}{909090}
-\definecolor{quarto-callout-note-color}{HTML}{0758E5}
-\definecolor{quarto-callout-important-color}{HTML}{CC1914}
-\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
-\definecolor{quarto-callout-tip-color}{HTML}{00A047}
-\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
-\definecolor{quarto-callout-color-frame}{HTML}{acacac}
-\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
-\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
-\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
-\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
-\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
-\makeatother
-\makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
 \ifdefined\contentsname
@@ -234,19 +218,6 @@
 \section{🎨 Selection Bias \& Missing Data Challenge - Part
 1}\label{selection-bias-missing-data-challenge---part-1}
 
-\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-important-color!10!white, arc=.35mm, breakable, toprule=.15mm, left=2mm, coltitle=black, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, bottomtitle=1mm, title=\textcolor{quarto-callout-important-color}{\faExclamation}\hspace{0.5em}{📊 Challenge Requirements}, colframe=quarto-callout-important-color-frame, leftrule=.75mm, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, colback=white]
-
-\textbf{Your Task:} Reproduce the blue noise stippling process
-demonstrated below to create: 1. A stippled version of your chosen image
-2. A progressive stippling GIF animation 3. Post both to a GitHub Pages
-site with appropriate captions and a brief explanation
-
-\textbf{Part 2 Preview:} On November 18th, we'll tackle Part 2 of this
-challenge, where you'll create a statistical meme about selection bias
-and missing data using your stippled images.
-
-\end{tcolorbox}
-
 \subsection{The Problem: Can Algorithms Create
 Art?}\label{the-problem-can-algorithms-create-art}
 
@@ -268,21 +239,6 @@ regions 2. Uses a toroidal (periodic) Gaussian kernel for repulsion to
 ensure blue noise properties 3. Iteratively selects points with minimum
 energy 4. Balances image content importance with blue noise spatial
 distribution
-
-\begin{tcolorbox}[enhanced jigsaw, colbacktitle=quarto-callout-warning-color!10!white, arc=.35mm, breakable, toprule=.15mm, left=2mm, coltitle=black, toptitle=1mm, opacityback=0, opacitybacktitle=0.6, bottomtitle=1mm, title=\textcolor{quarto-callout-warning-color}{\faExclamationTriangle}\hspace{0.5em}{⚠️ AI Partnership Required}, colframe=quarto-callout-warning-color-frame, leftrule=.75mm, bottomrule=.15mm, titlerule=0mm, rightrule=.15mm, colback=white]
-
-This challenge pushes boundaries intentionally. You'll tackle problems
-that normally require weeks of study, but with Cursor AI as your partner
-(and your brain keeping it honest), you can accomplish more than you
-thought possible.
-
-\textbf{The new reality:} The four stages of competence are Ignorance →
-Awareness → Learning → Mastery. AI lets us produce Mastery-level work
-while operating primarily in the Awareness stage. I focus on awareness
-training, you leverage AI for execution, and together we create outputs
-that used to require years of dedicated study.
-
-\end{tcolorbox}
 
 \subsection{Introduction to Blue Noise
 Stippling}\label{introduction-to-blue-noise-stippling}
@@ -718,6 +674,640 @@ version side by side for comparison.
 stippling}
 
 \end{figure}%
+
+\subsection{Experimental Variations}\label{experimental-variations}
+
+Let's experiment with different parameters and approaches to see how
+they affect the stippling results.
+
+\subsubsection{Darker Colors Focus}
+
+This experiment modifies the importance map to strongly prioritize
+darker areas, creating stipples that emphasize shadow regions.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{from}\NormalTok{ PIL }\ImportTok{import}\NormalTok{ Image}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+
+\CommentTok{\# Load and prepare image (reuse existing variables)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Image shape: }\SpecialCharTok{\{}\NormalTok{img\_resized}\SpecialCharTok{.}\NormalTok{shape}\SpecialCharTok{\}}\SpecialStringTok{"}\NormalTok{)}
+
+\CommentTok{\# Create importance map that prioritizes DARK areas (enhanced version of original)}
+\KeywordTok{def}\NormalTok{ create\_dark\_focus\_importance\_map(img, extreme\_sigma}\OperatorTok{=}\FloatTok{0.05}\NormalTok{, mid\_tone\_sigma}\OperatorTok{=}\FloatTok{0.15}\NormalTok{):}
+    \CommentTok{"""}
+\CommentTok{    Create importance map that strongly emphasizes dark areas}
+\CommentTok{    """}
+    \CommentTok{\# Use original brightness (dark areas naturally get higher importance)}
+\NormalTok{    brightness }\OperatorTok{=}\NormalTok{ img}
+
+    \CommentTok{\# Extreme tone downweighting (reduce very dark and very light areas)}
+\NormalTok{    extreme\_weight }\OperatorTok{=}\NormalTok{ np.exp(}\OperatorTok{{-}}\NormalTok{((brightness }\OperatorTok{{-}} \FloatTok{0.0}\NormalTok{) }\OperatorTok{/}\NormalTok{ extreme\_sigma)}\OperatorTok{**}\DecValTok{2}\NormalTok{) }\OperatorTok{+} \OperatorTok{\textbackslash{}}
+\NormalTok{                     np.exp(}\OperatorTok{{-}}\NormalTok{((brightness }\OperatorTok{{-}} \FloatTok{1.0}\NormalTok{) }\OperatorTok{/}\NormalTok{ extreme\_sigma)}\OperatorTok{**}\DecValTok{2}\NormalTok{)}
+
+    \CommentTok{\# Mid{-}tone boost (centered on darker mid{-}tones)}
+\NormalTok{    mid\_tone\_boost }\OperatorTok{=}\NormalTok{ np.exp(}\OperatorTok{{-}}\NormalTok{((brightness }\OperatorTok{{-}} \FloatTok{0.2}\NormalTok{) }\OperatorTok{/}\NormalTok{ mid\_tone\_sigma)}\OperatorTok{**}\DecValTok{2}\NormalTok{)}
+
+    \CommentTok{\# Combine: strongly boost dark mid{-}tones, moderately downweight extremes}
+\NormalTok{    importance }\OperatorTok{=} \FloatTok{0.2} \OperatorTok{+} \FloatTok{0.8} \OperatorTok{*}\NormalTok{ mid\_tone\_boost }\OperatorTok{{-}} \FloatTok{0.15} \OperatorTok{*}\NormalTok{ extreme\_weight}
+\NormalTok{    importance }\OperatorTok{=}\NormalTok{ np.clip(importance, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+
+    \ControlFlowTok{return}\NormalTok{ importance}
+
+\CommentTok{\# Generate importance map for dark focus}
+\NormalTok{dark\_focus\_map }\OperatorTok{=}\NormalTok{ create\_dark\_focus\_importance\_map(img\_resized, extreme\_sigma}\OperatorTok{=}\FloatTok{0.05}\NormalTok{, mid\_tone\_sigma}\OperatorTok{=}\FloatTok{0.15}\NormalTok{)}
+
+\CommentTok{\# Generate stippling pattern}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating stippling pattern (dark focus)..."}\NormalTok{)}
+\NormalTok{dark\_stipple\_pattern, dark\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.08}\NormalTok{,}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{dark\_focus\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(dark\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display dark{-}focus importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(dark\_focus\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Dark{-}Focus Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(dark\_stipple\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Dark{-}Focus Stippling\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Image shape: (251, 201)
+Generating stippling pattern (dark focus)...
+Generated 4036 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/darker-colors-experiment-output-2.pdf}}
+
+}
+
+\caption{Stippling experiment focusing on darker colors}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{No Brightness Inversion}: Removed
+1.0-img inversion (dark areas naturally get higher importance) -
+\textbf{Tighter Parameters}: extreme\_sigma=0.05 (sharper
+downweighting), mid\_tone\_sigma=0.15 (focused boost) - \textbf{Enhanced
+Mid-tone Boost}: Centered at 0.2 brightness with 80\% weight for dark
+mid-tones - \textbf{Reduced Extreme Downweighting}: 0.15 (vs 0.2) to
+maintain some contrast - \textbf{Why}: Strongly emphasizes dark areas
+(jersey) while preserving mid-tone details, creating shadow-focused
+stippling
+
+\paragraph{}
+
+\subsubsection{Edge-Enhanced Player
+Focus}\label{edge-enhanced-player-focus}
+
+This experiment uses edge detection to emphasize the player's silhouette
+and features, making him stand out from the background through contrast
+enhancement.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{from}\NormalTok{ scipy }\ImportTok{import}\NormalTok{ ndimage}
+\ImportTok{from}\NormalTok{ PIL }\ImportTok{import}\NormalTok{ Image}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+
+\CommentTok{\# Load and prepare image (reuse existing variables)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Image shape: }\SpecialCharTok{\{}\NormalTok{img\_resized}\SpecialCharTok{.}\NormalTok{shape}\SpecialCharTok{\}}\SpecialStringTok{"}\NormalTok{)}
+
+\CommentTok{\# Create edge{-}enhanced importance map for player focus}
+\KeywordTok{def}\NormalTok{ create\_player\_focus\_importance\_map(img, edge\_sigma}\OperatorTok{=}\FloatTok{1.0}\NormalTok{, contrast\_boost}\OperatorTok{=}\FloatTok{0.6}\NormalTok{):}
+    \CommentTok{"""}
+\CommentTok{    Create importance map that emphasizes edges and high{-}contrast areas}
+\CommentTok{    to make the player (white skin + dark jersey) pop out from background}
+\CommentTok{    """}
+    \CommentTok{\# Base importance from inverted brightness (dark areas get more stipples)}
+\NormalTok{    base\_importance }\OperatorTok{=} \FloatTok{1.0} \OperatorTok{{-}}\NormalTok{ img}
+
+    \CommentTok{\# Edge detection using Sobel operator}
+\NormalTok{    sobel\_x }\OperatorTok{=}\NormalTok{ ndimage.sobel(img, axis}\OperatorTok{=}\DecValTok{0}\NormalTok{)}
+\NormalTok{    sobel\_y }\OperatorTok{=}\NormalTok{ ndimage.sobel(img, axis}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{    edges }\OperatorTok{=}\NormalTok{ np.sqrt(sobel\_x}\OperatorTok{**}\DecValTok{2} \OperatorTok{+}\NormalTok{ sobel\_y}\OperatorTok{**}\DecValTok{2}\NormalTok{)}
+
+    \CommentTok{\# Smooth edges slightly}
+\NormalTok{    edges\_smooth }\OperatorTok{=}\NormalTok{ ndimage.gaussian\_filter(edges, sigma}\OperatorTok{=}\NormalTok{edge\_sigma)}
+
+    \CommentTok{\# Normalize edges to [0, 1]}
+    \ControlFlowTok{if}\NormalTok{ edges\_smooth.}\BuiltInTok{max}\NormalTok{() }\OperatorTok{\textgreater{}} \DecValTok{0}\NormalTok{:}
+\NormalTok{        edges\_smooth }\OperatorTok{=}\NormalTok{ edges\_smooth }\OperatorTok{/}\NormalTok{ edges\_smooth.}\BuiltInTok{max}\NormalTok{()}
+
+    \CommentTok{\# Local contrast measurement (standard deviation in small windows)}
+\NormalTok{    local\_std }\OperatorTok{=}\NormalTok{ ndimage.generic\_filter(img, np.std, size}\OperatorTok{=}\DecValTok{5}\NormalTok{)}
+
+    \CommentTok{\# Normalize local contrast}
+    \ControlFlowTok{if}\NormalTok{ local\_std.}\BuiltInTok{max}\NormalTok{() }\OperatorTok{\textgreater{}} \DecValTok{0}\NormalTok{:}
+\NormalTok{        local\_std }\OperatorTok{=}\NormalTok{ local\_std }\OperatorTok{/}\NormalTok{ local\_std.}\BuiltInTok{max}\NormalTok{()}
+
+    \CommentTok{\# Combine: base importance + edge boost + contrast boost}
+\NormalTok{    importance }\OperatorTok{=}\NormalTok{ base\_importance }\OperatorTok{+}\NormalTok{ contrast\_boost }\OperatorTok{*}\NormalTok{ edges\_smooth }\OperatorTok{+}\NormalTok{ contrast\_boost }\OperatorTok{*}\NormalTok{ local\_std}
+
+    \CommentTok{\# Normalize to [0, 1]}
+    \ControlFlowTok{if}\NormalTok{ importance.}\BuiltInTok{max}\NormalTok{() }\OperatorTok{\textgreater{}} \DecValTok{0}\NormalTok{:}
+\NormalTok{        importance }\OperatorTok{=}\NormalTok{ importance }\OperatorTok{/}\NormalTok{ importance.}\BuiltInTok{max}\NormalTok{()}
+
+    \ControlFlowTok{return}\NormalTok{ importance}
+
+\CommentTok{\# Generate edge{-}enhanced importance map}
+\NormalTok{player\_focus\_map }\OperatorTok{=}\NormalTok{ create\_player\_focus\_importance\_map(img\_resized, edge\_sigma}\OperatorTok{=}\FloatTok{1.0}\NormalTok{, contrast\_boost}\OperatorTok{=}\FloatTok{0.6}\NormalTok{)}
+
+\CommentTok{\# Generate stippling pattern}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating edge{-}enhanced stippling pattern..."}\NormalTok{)}
+\NormalTok{player\_stipple\_pattern, player\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.10}\NormalTok{,  }\CommentTok{\# Slightly higher density for detail}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{0.8}\NormalTok{,        }\CommentTok{\# Balanced clustering}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{player\_focus\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(player\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display player{-}focus importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(player\_focus\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Player{-}Focus Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(player\_stipple\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Player Edges\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{12}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{8}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Image shape: (251, 201)
+Generating edge-enhanced stippling pattern...
+Generated 5045 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/edge-enhanced-player-experiment-output-2.pdf}}
+
+}
+
+\caption{Edge-enhanced stippling to make the player pop out}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{Edge Detection}: Added Sobel operator
+edge detection to find boundaries - \textbf{Local Contrast}: Measured
+variance in 5x5 windows for high-contrast areas - \textbf{Combined
+Boost}: Edge + contrast signals added to base importance (60\% weight
+each) - \textbf{Higher Density}: 10\% points (vs 8\%) for more detail on
+player features - \textbf{Balanced Sigma}: 0.8 for good clustering
+without over-smoothing - \textbf{Why}: Emphasizes player silhouette
+through contrast enhancement, making him pop from background
+
+\paragraph{}
+
+\subsubsection{Contrast-Based Player
+Isolation}\label{contrast-based-player-isolation}
+
+This experiment creates an importance map based on local contrast
+patterns, boosting areas where bright regions (player's skin) meet dark
+regions (jersey), creating a silhouette effect.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ImportTok{import}\NormalTok{ numpy }\ImportTok{as}\NormalTok{ np}
+\ImportTok{from}\NormalTok{ scipy }\ImportTok{import}\NormalTok{ ndimage}
+\ImportTok{from}\NormalTok{ PIL }\ImportTok{import}\NormalTok{ Image}
+\ImportTok{import}\NormalTok{ matplotlib.pyplot }\ImportTok{as}\NormalTok{ plt}
+
+\CommentTok{\# Load and prepare image (reuse existing variables)}
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Image shape: }\SpecialCharTok{\{}\NormalTok{img\_resized}\SpecialCharTok{.}\NormalTok{shape}\SpecialCharTok{\}}\SpecialStringTok{"}\NormalTok{)}
+
+\CommentTok{\# Create contrast{-}based importance map for player isolation}
+\KeywordTok{def}\NormalTok{ create\_contrast\_player\_importance\_map(img, window\_size}\OperatorTok{=}\DecValTok{7}\NormalTok{, contrast\_threshold}\OperatorTok{=}\FloatTok{0.3}\NormalTok{):}
+    \CommentTok{"""}
+\CommentTok{    Create importance map that emphasizes high{-}contrast regions,}
+\CommentTok{    particularly where bright skin meets dark jersey}
+\CommentTok{    """}
+    \CommentTok{\# Base importance from brightness (darker areas get more stipples)}
+\NormalTok{    base\_importance }\OperatorTok{=}\NormalTok{ img  }\CommentTok{\# No inversion {-} we want to emphasize dark areas}
+
+    \CommentTok{\# Local contrast using range (max {-} min) in sliding windows}
+\NormalTok{    local\_max }\OperatorTok{=}\NormalTok{ ndimage.maximum\_filter(img, size}\OperatorTok{=}\NormalTok{window\_size)}
+\NormalTok{    local\_min }\OperatorTok{=}\NormalTok{ ndimage.minimum\_filter(img, size}\OperatorTok{=}\NormalTok{window\_size)}
+\NormalTok{    local\_range }\OperatorTok{=}\NormalTok{ local\_max }\OperatorTok{{-}}\NormalTok{ local\_min}
+
+    \CommentTok{\# Normalize local range}
+    \ControlFlowTok{if}\NormalTok{ local\_range.}\BuiltInTok{max}\NormalTok{() }\OperatorTok{\textgreater{}} \DecValTok{0}\NormalTok{:}
+\NormalTok{        local\_contrast }\OperatorTok{=}\NormalTok{ local\_range }\OperatorTok{/}\NormalTok{ local\_range.}\BuiltInTok{max}\NormalTok{()}
+    \ControlFlowTok{else}\NormalTok{:}
+\NormalTok{        local\_contrast }\OperatorTok{=}\NormalTok{ local\_range}
+
+    \CommentTok{\# Find areas with medium brightness that have high local contrast}
+    \CommentTok{\# (likely the edges between skin and jersey)}
+\NormalTok{    medium\_brightness }\OperatorTok{=}\NormalTok{ np.exp(}\OperatorTok{{-}}\NormalTok{((img }\OperatorTok{{-}} \FloatTok{0.5}\NormalTok{) }\OperatorTok{/} \FloatTok{0.2}\NormalTok{)}\OperatorTok{**}\DecValTok{2}\NormalTok{)  }\CommentTok{\# Gaussian centered on mid{-}tones}
+
+    \CommentTok{\# Boost areas with both medium brightness AND high local contrast}
+\NormalTok{    contrast\_boost }\OperatorTok{=}\NormalTok{ local\_contrast }\OperatorTok{*}\NormalTok{ medium\_brightness}
+
+    \CommentTok{\# Also boost pure dark areas (jersey)}
+\NormalTok{    dark\_boost }\OperatorTok{=}\NormalTok{ np.exp(}\OperatorTok{{-}}\NormalTok{((img }\OperatorTok{{-}} \FloatTok{0.0}\NormalTok{) }\OperatorTok{/} \FloatTok{0.15}\NormalTok{)}\OperatorTok{**}\DecValTok{2}\NormalTok{)}
+
+    \CommentTok{\# Combine importance maps}
+\NormalTok{    importance }\OperatorTok{=} \FloatTok{0.4} \OperatorTok{*}\NormalTok{ base\_importance }\OperatorTok{+} \FloatTok{0.4} \OperatorTok{*}\NormalTok{ contrast\_boost }\OperatorTok{+} \FloatTok{0.2} \OperatorTok{*}\NormalTok{ dark\_boost}
+
+    \CommentTok{\# Ensure minimum importance for very bright areas (background)}
+\NormalTok{    importance }\OperatorTok{=}\NormalTok{ np.where(img }\OperatorTok{\textgreater{}} \FloatTok{0.8}\NormalTok{, importance }\OperatorTok{*} \FloatTok{0.3}\NormalTok{, importance)}
+
+    \CommentTok{\# Clip to [0, 1]}
+\NormalTok{    importance }\OperatorTok{=}\NormalTok{ np.clip(importance, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{)}
+
+    \ControlFlowTok{return}\NormalTok{ importance}
+
+\CommentTok{\# Generate contrast{-}based importance map}
+\NormalTok{contrast\_player\_map }\OperatorTok{=}\NormalTok{ create\_contrast\_player\_importance\_map(img\_resized, window\_size}\OperatorTok{=}\DecValTok{7}\NormalTok{, contrast\_threshold}\OperatorTok{=}\FloatTok{0.3}\NormalTok{)}
+
+\CommentTok{\# Generate stippling pattern}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating contrast{-}based player stippling pattern..."}\NormalTok{)}
+\NormalTok{contrast\_player\_pattern, contrast\_player\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.08}\NormalTok{,}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.95}\NormalTok{,  }\CommentTok{\# Higher content bias for shape preservation}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{contrast\_player\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(contrast\_player\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display contrast{-}player importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(contrast\_player\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Contrast{-}Player Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(contrast\_player\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Player Silhouette\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{12}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{8}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Image shape: (251, 201)
+Generating contrast-based player stippling pattern...
+Generated 4036 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/contrast-player-experiment-output-2.pdf}}
+
+}
+
+\caption{Contrast-based stippling to isolate the player silhouette}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{Local Range Analysis}: Used 7x7
+sliding windows to measure brightness range (max-min) - \textbf{Medium
+Brightness Focus}: Gaussian boost centered on 0.5 brightness for
+skin-jersey boundaries - \textbf{Dark Area Boost}: Additional emphasis
+on pure dark areas (jersey) with tight sigma (0.15) - \textbf{Background
+Suppression}: Reduced importance for very bright areas (background) by
+70\% - \textbf{High Content Bias}: 0.95 (vs 0.9) for better shape
+preservation - \textbf{Why}: Creates figure-ground separation by
+isolating high-contrast player regions from uniform background
+
+\paragraph{}
+
+\subsubsection{High Density Stippling
+(12\%)}\label{high-density-stippling-12}
+
+This experiment uses a higher percentage of stipple points (12\% instead
+of 8\%) to create denser stippling.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generate stippling pattern with higher density}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating high{-}density stippling pattern..."}\NormalTok{)}
+\NormalTok{high\_density\_pattern, high\_density\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.12}\NormalTok{,  }\CommentTok{\# Increased from 0.08 to 0.12}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{importance\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(high\_density\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(importance\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Importance Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display high{-}density stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(high\_density\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}High Density (12\%)\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Generating high-density stippling pattern...
+Generated 6054 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/high-density-experiment-output-2.pdf}}
+
+}
+
+\caption{High density stippling experiment (12\% points)}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{Higher Density}: percentage=0.12 (vs
+0.08) for 50\% more stipple points - \textbf{Same Parameters}: All other
+settings identical to baseline (sigma=0.9, content\_bias=0.9) -
+\textbf{Why}: Creates denser, more detailed stippling with finer
+granularity, revealing more image features
+
+\paragraph{}
+
+\subsubsection{Low Density Stippling
+(5\%)}\label{low-density-stippling-5}
+
+This experiment uses a lower percentage of stipple points (5\% instead
+of 8\%) to create sparser stippling.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generate stippling pattern with lower density}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating low{-}density stippling pattern..."}\NormalTok{)}
+\NormalTok{low\_density\_pattern, low\_density\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.05}\NormalTok{,  }\CommentTok{\# Decreased from 0.08 to 0.05}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{importance\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(low\_density\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(importance\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Importance Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display low{-}density stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(low\_density\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Low Density (5\%)\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Generating low-density stippling pattern...
+Generated 2522 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/low-density-experiment-output-2.pdf}}
+
+}
+
+\caption{Low density stippling experiment (5\% points)}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{Lower Density}: percentage=0.05 (vs
+0.08) for 37\% fewer stipple points - \textbf{Same Parameters}: All
+other settings identical to baseline (sigma=0.9, content\_bias=0.9) -
+\textbf{Why}: Creates minimal, artistic stippling that captures
+essential shapes with fewer points, emphasizing bold contrasts
+
+\paragraph{}
+
+\subsubsection{High Sigma Stippling
+(σ=1.2)}\label{high-sigma-stippling-ux3c31.2}
+
+This experiment uses a higher sigma value (1.2 instead of 0.9) for the
+blue noise generation, creating more clustered stippling patterns.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generate stippling pattern with higher sigma}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating high{-}sigma stippling pattern..."}\NormalTok{)}
+\NormalTok{high\_sigma\_pattern, high\_sigma\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.08}\NormalTok{,}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{1.2}\NormalTok{,  }\CommentTok{\# Increased from 0.9 to 1.2}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{importance\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(high\_sigma\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(importance\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Importance Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display high{-}sigma stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(high\_sigma\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}High Sigma (σ=1.2)\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Generating high-sigma stippling pattern...
+Generated 4036 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/high-sigma-experiment-output-2.pdf}}
+
+}
+
+\caption{High sigma stippling experiment (σ=1.2)}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{Higher Sigma}: sigma=1.2 (vs 0.9) for
+blue noise generation - \textbf{Same Parameters}: All other settings
+identical to baseline (percentage=0.08, content\_bias=0.9) -
+\textbf{Why}: Creates more clustered stippling with larger spacing
+variations, producing a more organic, less uniform distribution
+
+\paragraph{}
+
+\subsubsection{Low Sigma Stippling
+(σ=0.5)}\label{low-sigma-stippling-ux3c30.5}
+
+This experiment uses a lower sigma value (0.5 instead of 0.9) for the
+blue noise generation, creating more dispersed stippling patterns.
+
+\paragraph{Python}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Generate stippling pattern with lower sigma}
+\BuiltInTok{print}\NormalTok{(}\StringTok{"Generating low{-}sigma stippling pattern..."}\NormalTok{)}
+\NormalTok{low\_sigma\_pattern, low\_sigma\_samples }\OperatorTok{=}\NormalTok{ void\_and\_cluster(}
+\NormalTok{    img\_resized,}
+\NormalTok{    percentage}\OperatorTok{=}\FloatTok{0.08}\NormalTok{,}
+\NormalTok{    sigma}\OperatorTok{=}\FloatTok{0.5}\NormalTok{,  }\CommentTok{\# Decreased from 0.9 to 0.5}
+\NormalTok{    content\_bias}\OperatorTok{=}\FloatTok{0.9}\NormalTok{,}
+\NormalTok{    importance\_img}\OperatorTok{=}\NormalTok{importance\_map,}
+\NormalTok{    noise\_scale\_factor}\OperatorTok{=}\FloatTok{0.1}
+\NormalTok{)}
+
+\BuiltInTok{print}\NormalTok{(}\SpecialStringTok{f"Generated }\SpecialCharTok{\{}\BuiltInTok{len}\NormalTok{(low\_sigma\_samples)}\SpecialCharTok{\}}\SpecialStringTok{ stipple points"}\NormalTok{)}
+
+\CommentTok{\# Display results}
+\NormalTok{fig, axes }\OperatorTok{=}\NormalTok{ plt.subplots(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{, figsize}\OperatorTok{=}\NormalTok{(}\DecValTok{7}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+
+\CommentTok{\# Display original image}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].imshow(img\_resized, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{0}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Original Image\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display importance map}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].imshow(importance\_map, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{1}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Importance Map\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\CommentTok{\# Display low{-}sigma stippled image}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].imshow(low\_sigma\_pattern, cmap}\OperatorTok{=}\StringTok{\textquotesingle{}gray\textquotesingle{}}\NormalTok{, vmin}\OperatorTok{=}\DecValTok{0}\NormalTok{, vmax}\OperatorTok{=}\DecValTok{1}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].axis(}\StringTok{\textquotesingle{}off\textquotesingle{}}\NormalTok{)}
+\NormalTok{axes[}\DecValTok{2}\NormalTok{].set\_title(}\StringTok{\textquotesingle{}Low Sigma (σ=0.5)\textquotesingle{}}\NormalTok{, fontsize}\OperatorTok{=}\DecValTok{14}\NormalTok{, fontweight}\OperatorTok{=}\StringTok{\textquotesingle{}bold\textquotesingle{}}\NormalTok{, pad}\OperatorTok{=}\DecValTok{10}\NormalTok{)}
+
+\NormalTok{plt.tight\_layout()}
+\NormalTok{plt.show()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+Generating low-sigma stippling pattern...
+Generated 4036 stipple points
+\end{verbatim}
+
+\begin{figure}[H]
+
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/low-sigma-experiment-output-2.pdf}}
+
+}
+
+\caption{Low sigma stippling experiment (σ=0.5)}
+
+\end{figure}%
+
+\textbf{Changes \& Why:} - \textbf{Lower Sigma}: sigma=0.5 (vs 0.9) for
+blue noise generation - \textbf{Same Parameters}: All other settings
+identical to baseline (percentage=0.08, content\_bias=0.9) -
+\textbf{Why}: Creates more dispersed stippling with smaller spacing
+variations, producing a more uniform, grid-like distribution
+
+\paragraph{}
 
 \subsection{Progressive Stippling
 Animation}\label{progressive-stippling-animation}
